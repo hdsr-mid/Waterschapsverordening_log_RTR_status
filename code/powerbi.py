@@ -31,14 +31,13 @@ class PowerBIData:
             line_number = str(row["locatieIdentificatie"]).strip()
             noemer = str(row["noemer"]).strip()
             
-            print(':')
-            print(row)
-            print(',')
+            #print()
+            #print("row", row)
             
             if noemer and noemer != 'NaN' and line_number:
                 geo_names_by_index[line_number] = noemer
-                print(noemer, line_number)
-            print('.')
+                #print("noemer, linenr", noemer, line_number)
+            #print()
         
         return geo_names_by_index
 

@@ -55,7 +55,7 @@ class RTR:
 
     def archive_activities(self):
         for activity in self.urns2:
-            print(activity)
+            #print("activity", activity)
             self.collect_unique_werkingsgebieden(activity)
         
         headers = [
@@ -118,25 +118,38 @@ class RTR:
         matched_descriptions = []
         for url in identifications:
             description = self.get_description(url)
+            print(url, description) 
             matched_descriptions.append(description)
-            print(url)
-        print(matched_descriptions)
+            #print("url", url)
+        #print("matched_descriptions", matched_descriptions)
+
+        
+        #print('id', identifications)
+        #print("m", matched_descriptions)
+
         return matched_descriptions
 
     def get_description(self, url):
         if "ambtsgebied" in url:
-            print("ambt")
+            #print("geo_variables ambt", type("geo_variables ambt"))
             return 'Ambtsgebied'
-        else:
-            print(self.geo_variables.get(url))
+        elif self.geo_variables.get(url) is not None:
+            #print("geo_variables", self.geo_variables.get(url), type(self.geo_variables.get(url)))
             return self.geo_variables.get(url)
 
     def update_activity_mapping(self, activity_description, matched_descriptions):
         self.unique_werkingsgebieden.update(matched_descriptions)
+        #if None in self.unique_werkingsgebieden:print("self.unique_werkingsgebieden", self.unique_werkingsgebieden)
+        #print("match:",matched_descriptions)
+        #print("activity_discr", activity_description)
+
         if activity_description in self.werkingsgebied_per_activity:
+            #if None in self.unique_werkingsgebieden: print("in")
             self.werkingsgebied_per_activity[activity_description].extend(matched_descriptions)
         else:
+            #if None in self.unique_werkingsgebieden: print("not in")
             self.werkingsgebied_per_activity[activity_description] = matched_descriptions
+        #print("self.unique_werkingsgebieden", self.unique_werkingsgebieden)
 
     def invert_werkingsgebied_mapping(self):
         gebied_to_activities = {}
