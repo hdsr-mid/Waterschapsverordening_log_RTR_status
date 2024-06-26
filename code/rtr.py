@@ -55,8 +55,11 @@ class RTR:
 
     def archive_activities(self):
         for activity in self.urns2:
-            #print("activity", activity)
+            print(activity)
             self.collect_unique_werkingsgebieden(activity)
+        
+        # Filter out None or empty string values before sorting
+        filtered_werkingsgebieden = [wg for wg in self.unique_werkingsgebieden if wg]
         
         headers = [
             "Activiteit                   ",
@@ -66,7 +69,8 @@ class RTR:
             "Wijziging Melding",
             "Wijziging Aanvraag vergunning",
             "Wijziging Informatie",
-        ] + sorted(self.unique_werkingsgebieden)
+        ] + sorted(filtered_werkingsgebieden)
+        
         self.excel_handler = ExcelHandler(self.bestuursorgaan, self.base_dir, self.args.env, self.args.date, headers)
         
         for row, activity in enumerate(self.urns2, 2):
@@ -78,6 +82,7 @@ class RTR:
         if self.args.location:
             self.sorted_gebied_to_activities = self.invert_werkingsgebied_mapping()
             self.write_werkingsgebieden_to_file()
+
 
     def collect_unique_werkingsgebieden(self, activity):
         government, name, uri = activity
@@ -105,7 +110,7 @@ class RTR:
     def update_werkingsgebied_per_activity(self, json_data):
         activity_description = self.extract_activity_description(json_data)
         identifications = self.extract_identifications(json_data)
-        matched_descriptions = self.match_descriptions(identifications)
+        matched_descriptions = [desc for desc in self.match_descriptions(identifications) if desc]
         self.update_activity_mapping(activity_description, matched_descriptions)
 
     def extract_activity_description(self, json_data):
@@ -131,11 +136,8 @@ class RTR:
 
     def get_description(self, url):
         if "ambtsgebied" in url:
-            #print("geo_variables ambt", type("geo_variables ambt"))
             return 'Ambtsgebied'
-        elif self.geo_variables.get(url) is not None:
-            #print("geo_variables", self.geo_variables.get(url), type(self.geo_variables.get(url)))
-            return self.geo_variables.get(url)
+        return self.geo_variables.get(url, '')
 
     def update_activity_mapping(self, activity_description, matched_descriptions):
         self.unique_werkingsgebieden.update(matched_descriptions)
