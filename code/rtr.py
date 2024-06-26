@@ -119,19 +119,17 @@ class RTR:
         for url in identifications:
             description = self.get_description(url)
             matched_descriptions.append(description)
+            print(url)
+        print(matched_descriptions)
         return matched_descriptions
 
     def get_description(self, url):
-        if url == 'nl.imow-ws0636.ambtsgebied.HDSR':
-            return 'Ambtsgebied HDSR'
+        if "ambtsgebied" in url:
+            print("ambt")
+            return 'Ambtsgebied'
         else:
-            index = url.split('.')[-1][-2:]
-            clean_index = index.lstrip('0')
-            
-            print(index, clean_index)
-            print(self.geo_variables.get(clean_index))
-
-            return self.geo_variables.get(clean_index, f"null: {url}")
+            print(self.geo_variables.get(url))
+            return self.geo_variables.get(url)
 
     def update_activity_mapping(self, activity_description, matched_descriptions):
         self.unique_werkingsgebieden.update(matched_descriptions)
